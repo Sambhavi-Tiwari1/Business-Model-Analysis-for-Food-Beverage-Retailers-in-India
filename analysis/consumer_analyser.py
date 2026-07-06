@@ -139,4 +139,104 @@ class ConsumerAnalyzer:
             'count': len(professionals),
             'percentage': len(professionals) / len(data) * 100,
             'avg_spending': professionals['spending_per_visit'].mean(),
-            'primary_channel
+            'primary_channel': 'Delivery' if professionals['online_ordering'].mean() > 0.5 else 'Dine-in',
+            'characteristics': 'High frequency, medium-high spending, convenience-focused'
+        }
+        
+        # Families (Medium-high income, weekend dining)
+        families = data[
+            (data['income_level'].isin(['Medium', 'High'])) &
+            (data['visit_frequency'].isin(['Weekly']))
+        ]
+        segments['families'] = {
+            'count': len(families),
+            'percentage': len(families) / len(data) * 100,
+            'avg_spending': families['spending_per_visit'].mean(),
+            'primary_channel': 'Dine-in',
+            'characteristics': 'Medium frequency, high spending, experience-focused'
+        }
+        
+        # Students (Low-medium income, high frequency)
+        students = data[
+            (data['income_level'].isin(['Low', 'Medium'])) &
+            (data['visit_frequency'].isin(['Daily', '2-3/Week']))
+        ]
+        segments['students'] = {
+            'count': len(students),
+            'percentage': len(students) / len(data) * 100,
+            'avg_spending': students['spending_per_visit'].mean(),
+            'primary_channel': 'Takeaway' if students['online_ordering'].mean() < 0.3 else 'Delivery',
+            'characteristics': 'High frequency, low-medium spending, budget-conscious'
+        }
+        
+        # Couples (Medium-high income, occasional dining)
+        couples = data[
+            (data['income_level'].isin(['Medium', 'High'])) &
+            (data['visit_frequency'].isin(['Weekly', 'Monthly']))
+        ]
+        segments['couples'] = {
+            'count': len(couples),
+            'percentage': len(couples) / len(data) * 100,
+            'avg_spending': couples['spending_per_visit'].mean(),
+            'primary_channel': 'Dine-in',
+            'characteristics': 'Low-medium frequency, medium-high spending, experience-focused'
+        }
+        
+        return segments
+    
+    def _identify_high_potential_segments(self, data: pd.DataFrame) -> List:
+        """Identify high potential customer segments"""
+        
+        segments = self._segment_consumers(data)
+        
+        high_potential = []
+        
+        for segment_name, segment_data in segments.items():
+            if segment_data['count'] > 0:
+                # Calculate potential score based on size, spending, and growth
+                size_score = segment_data['percentage'] / 100
+                spending_score = segment_data['avg_spending'] / data['spending_per_visit'].max()
+                potential_score = (size_score * 0.4 + spending_score * 0.6)
+                
+                high_potential.append({
+                    'name': segment_name.replace('_', ' ').title(),
+                    'size': segment_data['count'],
+                    'percentage': segment_data['percentage'],
+                    'avg_spending': segment_data['avg_spending'],
+                    'potential_score': potential_score * 100,
+                    'recommended_strategy': self._get_segment_strategy(segment_name)
+                })
+        
+        return sorted(high_potential, key=lambda x: x['potential_score'], reverse=True)
+    
+    def _get_segment_strategy(self, segment_name: str) -> str:
+        """Get recommended strategy for segment"""
+        strategies = {
+            'working_professionals': 'Focus on speed and convenience with loyalty programs',
+            'families': 'Create family-friendly atmosphere with value bundles',
+            'students': 'Offer budget-friendly options and student discounts',
+            'couples': 'Create romantic ambiance with premium offerings'
+        }
+        return strategies.get(segment_name, 'General engagement strategy')
+    
+    def _analyze_spending_patterns(self, data: pd.DataFrame) -> Dict:
+        """Analyze consumer spending patterns"""
+        
+        # Frequency distribution
+        frequency_counts = data['visit_frequency'].value_counts().to_dict()
+        
+        # Channel spending
+        channel_spending = data.groupby('preferred_channels')['spending_per_visit'].mean()
+        
+        # Income vs spending
+        income_spending = data.groupby('income_level')['spending_per_visit'].mean().to_dict()
+        
+        return {
+            'frequency_distribution': frequency_counts,
+            'channel_spending': channel_spending.to_dict(),
+            'income_spending': income_spending,
+            'avg_spending': data['spending_per_visit'].mean(),
+            'max_spending': data['spending_per_visit'].max(),
+            'min_spending': data['spending_per_visit'].min(),
+            'top_occasions': ['Weekend', 'Special Occasions', 'Work Lunch', 'Family Dinner']
+        }
