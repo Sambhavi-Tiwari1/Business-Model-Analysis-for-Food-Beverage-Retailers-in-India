@@ -1,0 +1,63 @@
+# F&B Retail Business Model Analysis Configuration
+
+# System Settings
+system:
+  name: "F&B Retail Business Model Analyzer"
+  version: "1.0.0"
+  log_level: INFO
+
+# Market Analysis
+market:
+  country: "India"
+  years_analyzed: 5
+  segments:
+    - "QSR"
+    - "Casual Dining"
+    - "Fine Dining"
+    - "Cloud Kitchens"
+    - "Street Food"
+
+# Consumer Analysis
+consumer:
+  sample_size: 1000
+  age_groups:
+    - "18-25"
+    - "26-35"
+    - "36-45"
+    - "45+"
+  income_groups:
+    - "Low"
+    - "Medium"
+    - "High"
+
+# Profitability Analysis
+profitability:
+  benchmarks:
+    food_cost: 32
+    labor_cost: 22
+    rent_cost: 12
+    marketing_cost: 5
+  target_margin: 15
+
+# Location Analysis
+location:
+  types:
+    - "High Street"
+    - "Mall"
+    - "Residential"
+    - "Office District"
+    - "Food Court"
+  foot_traffic_weights:
+    high_street: 0.9
+    mall: 0.8
+    residential: 0.5
+    office: 0.8
+    food_court: 0.7
+
+# Strategic Recommendations
+strategy:
+  priorities:
+    - "operational_efficiency"
+    - "customer_retention"
+    - "growth_expansion"
+    - "sustainability"
