@@ -26,5 +26,3 @@ Conduct a comprehensive analysis of the Indian food and beverage retail market t
 - **Visualization**: Matplotlib, Seaborn, Plotly
 - **Documentation**: Markdown, Jupyter Notebooks
 - **Version Control**: Git & GitHub
-
-### 📂 Repository Structure
