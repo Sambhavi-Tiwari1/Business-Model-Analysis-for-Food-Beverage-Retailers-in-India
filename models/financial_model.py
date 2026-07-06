@@ -289,4 +289,7 @@ class FinancialModel:
         
         return {
             'break_even_units': round(break_even_units, 2),
-            'break_even_revenue': round(break_even_revenue
+            'break_even_revenue': round(break_even_revenue, 2),
+            'contribution_margin': round(contribution_margin, 2),
+            'margin_ratio': round((contribution_margin / price_per_unit) * 100, 1)
+        }
